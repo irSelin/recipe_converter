@@ -1,6 +1,6 @@
 # RecipeConverter
 
-**TODO: Add description**
+An Elixir application to import information from recipe websites. (Helper app for Companio)
 
 ## Installation
 
