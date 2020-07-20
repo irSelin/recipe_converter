@@ -2,7 +2,7 @@ defmodule RecipeConverterTest do
   use ExUnit.Case
   doctest RecipeConverter
 
-  test "greets the world" do
-    assert RecipeConverter.hello() == :world
+  test "tests are running" do
+    assert 1 == 1
   end
 end
