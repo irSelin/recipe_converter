@@ -7,23 +7,37 @@ defmodule RecipeConverter do
   @doc """
   Grabs the HTML source from [url]
 
-  Requires [url] is a valid url string
+  Param [url]: a string of a url
 
-  Returns the html source that [url] links to
+  Returns: {status, contents} where
+    [status] is [:ok] if the source was successfully obtained and [:error]
+    otherwise
+    [contents] is the source code for the website if successful, or an error
+    description otherwise
+
   """
   def html_from_url(url) do
-    # HTTPoison.get!()
-    raise "html_from_url not implemented"
+    case HTTPoison.get(url) do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        {:ok, body}
+
+      {:ok, %HTTPoison.Response{status_code: 404}} ->
+        {:error, "Url not found"}
+
+      {:error, _} ->
+        {:error, "Problem with input url"}
+    end
   end
 
   @doc """
   Main function for recipe conversion, to be called by user.
 
-  Requires
+  Param [url]: a string of a url
 
   Returns
   """
   def from_nyt(url) do
+    html_from_url(url)
     raise "from_nyc not implemented"
   end
 end
