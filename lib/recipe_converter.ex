@@ -12,9 +12,8 @@ defmodule RecipeConverter do
   Returns: {status, contents} where
     [status] is [:ok] if the source was successfully obtained and [:error]
     otherwise
-    [contents] is the source code for the website if successful, or an error
-    description otherwise
-
+    [contents] is a string of the source code for the website if successful, or
+    an error description otherwise
   """
   def html_from_url(url) do
     case HTTPoison.get(url) do
@@ -30,11 +29,10 @@ defmodule RecipeConverter do
   end
 
   @doc """
-  Main function for recipe conversion, to be called by user.
+  Main function for recipe conversion, to be called by user. See module doc for
+  more detailled info.
 
   Param [url]: a string of a url
-
-  Returns
   """
   def from_nyt(url) do
     html_from_url(url)
