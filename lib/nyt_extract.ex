@@ -11,20 +11,34 @@ defmodule NytExtract do
   Param [html]: the source code for the NYT website
   Requires: [html] is a string of html source code from a NYT website
 
-  Returns: assoc list of useful chunks
+  Returns: assoc list of useful html chunks
+           has keys [title]
   """
   def slim(html) do
     # div class headers that tag useful chunks of html
     section_headers = ["<div class=\"title-container\">", "<div class=\"recipe-subhead\">"]
 
+    # no error handling for incorrect inputs
+    # no error handling for lack of matches
     raw_split = String.split(html, section_headers)
     [_a, b | _] = raw_split
     %{:title => b}
+  end
 
-    # split by <div class =
-    # pattern match on headers used near sections I want & toss the rest
-    # send those to sub-functions for extracting the actual data
-    # return a map of K= name atom, V= string content
+  @doc """
+  Extracts useful information out of the smaller HTML chunks
+
+  Param [assoc]: an association list of smaller HTML chunks (of the format
+                 returned by slim)
+
+  Returns: assoc list of useful html chunks
+           has keys [title]
+  """
+  def slice(assoc) do
+    # no error handling for lack of matches
+    # no error handling for missing keys
+    title = hd(Regex.run(~r|data-name=\"(?<x>.+)\"\n|, assoc.title, capture: :all_but_first))
+    %{:title => title}
   end
 
   @doc """
@@ -37,7 +51,6 @@ defmodule NytExtract do
   Returns:
   """
   def nyt_extract(html) do
-    slim(html)
-    raise "nyt_extract unimplemented"
+    slim(html) |> slice()
   end
 end
