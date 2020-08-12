@@ -14,15 +14,33 @@ defmodule NytExtract do
   Returns: assoc list of useful html chunks
            has keys [title]
   """
-  def slim(html) do
+  def rough_cut(html) do
     # div class headers that tag useful chunks of html
-    section_headers = ["<div class=\"title-container\">", "<div class=\"recipe-subhead\">"]
+    div0_tl = "<div class=\"secondary-controls\">"
+    div1_hd = "<div class=\"title-container\">"
+    div2_contents = ["<div class=\"recipe-subhead\">",
+      "<div class=\"share-group share-bubbles recipe-details-share primary\">",
+      "<div class=\"topnote\">",
+      "<div class=\"tags-nutrition-container\">",
+      "<div class=\"recipe-actions\">",
+      "<div class=\"recipe-instructions\">",
+      "<section class=\"recipe-steps-wrap\">"
+    ]
 
     # no error handling for incorrect inputs
     # no error handling for lack of matches
-    raw_split = String.split(html, section_headers)
-    [_a, b | _] = raw_split
-    %{:title => b}
+    [hd0, _tl] = String.split(html, div0_tl)
+    [_hd, tl1] = String.split(hd0, div1_hd)
+    [title, subhead, _, topnote, tags, _, ingredients, steps] =
+      String.split(tl1, div2_contents)
+
+    %{:title => title,
+      :recipe_subhead => subhead,
+      :topnote => topnote,
+      :tags => tags,
+      :ingredients => ingredients,
+      :steps => steps
+    }
   end
 
   @doc """
@@ -34,7 +52,7 @@ defmodule NytExtract do
   Returns: assoc list of useful html chunks
            has keys [title]
   """
-  def slice(assoc) do
+  def fine_trim(assoc) do
     # no error handling for lack of matches
     # no error handling for missing keys
     title = hd(Regex.run(~r|data-name=\"(?<x>.+)\"\n|, assoc.title, capture: :all_but_first))
@@ -51,6 +69,6 @@ defmodule NytExtract do
   Returns:
   """
   def nyt_extract(html) do
-    slim(html) |> slice()
+    rough_cut(html) |> fine_trim()
   end
 end

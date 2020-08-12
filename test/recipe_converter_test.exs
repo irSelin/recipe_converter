@@ -33,8 +33,11 @@ defmodule RecipeConverterTest do
     NytExtract.nyt_extract(html)
   end
 
-  test "Extracting title using NytExtract" do
+  test "Extracting title using NytExtract from known HTML" do
     assert "The Best Roast Beef for Sandwiches" = case1().title
+  end
+
+  test "Extracting title using NytExtract from unknown HTML" do
     assert "No-Knead Bread" = case2().title
     assert "Marinated Feta With Herbs and Peppercorns" = case3().title
   end
