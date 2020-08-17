@@ -12,7 +12,7 @@ defmodule NytExtract do
   Requires: [html] is a string of html source code from a NYT website
 
   Returns: assoc list of useful html chunks
-           has keys [title]
+           has keys [title, author, yield, time, topnote, tags, ingredients, steps]
   """
   def rough_cut(html) do
     # div class headers that tag useful chunks of html
@@ -26,6 +26,7 @@ defmodule NytExtract do
       "<div class=\"recipe-instructions\">",
       "<section class=\"recipe-steps-wrap\">"
     ]
+    div3_recipe_subhead = ["Yield", "Time"]
 
     # no error handling for incorrect inputs
     # no error handling for lack of matches
@@ -33,9 +34,12 @@ defmodule NytExtract do
     [_hd, tl1] = String.split(hd0, div1_hd)
     [title, subhead, _, topnote, tags, _, ingredients, steps] =
       String.split(tl1, div2_contents)
+    [author, yield, time] = String.split(subhead, div3_recipe_subhead)
 
     %{:title => title,
-      :recipe_subhead => subhead,
+      :author => author,
+      :yield => yield,
+      :time => time,
       :topnote => topnote,
       :tags => tags,
       :ingredients => ingredients,
@@ -59,12 +63,15 @@ defmodule NytExtract do
       assoc.title,
       capture: :all_but_first))
     author = hd(Regex.run(~r|data-author="(?<x>.+)"|x,
-      assoc.recipe_subhead,
+      assoc.author,
       capture: :all_but_first))
     yield = hd(Regex.run(~r|"recipe-yield-value">(?<x>.+)</span>|x,
-      assoc.recipe_subhead,
+      assoc.yield,
       capture: :all_but_first))
-    %{:title => title, :author => author, :yield => yield}
+    time = hd(Regex.run(~r|"recipe-yield-value">(?<x>.+)</span>|x,
+      assoc.time,
+      capture: :all_but_first))
+    %{:title => title, :author => author, :yield => yield, :time => time}
   end
 
   @doc """

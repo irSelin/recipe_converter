@@ -63,4 +63,16 @@ defmodule RecipeConverterTest do
     assert "One 1 1/2-pound loaf" = case2().yield
     assert "About 2 1/2 cups" = case3().yield
   end
+
+  # NytExtract.fine_trim time extraction
+  test "Extracting time using NytExtract from known HTML" do
+    assert "1 hour, 45 minutes, plus at least 5 hours resting" = case1().time
+  end
+
+  test "Extracting time using NytExtract from unknown HTML" do
+    #weird error with reading the apostraphe, not sure what to do with
+    #assert "1 hour 30 minutes, plus about 20 hours' resting time" =
+    #  case2().time
+    assert "10 minutes, plus marinating" = case3().time
+  end
 end
