@@ -54,24 +54,35 @@ defmodule NytExtract do
                  returned by slim)
 
   Returns: assoc list of useful html chunks
-           has keys [title, author]
+           has keys [title, author, yield, time, topnote]
   """
   def fine_trim(assoc) do
     # no error handling for lack of matches
     # no error handling for missing keys
     title = hd(Regex.run(~r|data-name=\"(?<x>.+)\"\n|,
-      assoc.title,
-      capture: :all_but_first))
+              assoc.title,
+              capture: :all_but_first))
     author = hd(Regex.run(~r|data-author="(?<x>.+)"|x,
-      assoc.author,
-      capture: :all_but_first))
+              assoc.author,
+              capture: :all_but_first))
     yield = hd(Regex.run(~r|"recipe-yield-value">(?<x>.+)</span>|x,
-      assoc.yield,
-      capture: :all_but_first))
+              assoc.yield,
+              capture: :all_but_first))
     time = hd(Regex.run(~r|"recipe-yield-value">(?<x>.+)</span>|x,
-      assoc.time,
-      capture: :all_but_first))
-    %{:title => title, :author => author, :yield => yield, :time => time}
+              assoc.time,
+              capture: :all_but_first))
+    note_lst = Regex.run(~r|<p>(?<x>.+)</p><p>|x,
+              assoc.topnote,
+              capture: :all_but_first)
+    topnote = cond do
+                note_lst -> hd(note_lst)
+                true -> hd (Regex.run(~r|<p>(?<x>.+)</p>|x,
+                          assoc.topnote,
+                          capture: :all_but_first))
+              end
+
+    %{:title => title, :author => author, :yield => yield, :time => time,
+      :topnote => topnote}
   end
 
   @doc """
