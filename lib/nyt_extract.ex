@@ -55,8 +55,13 @@ defmodule NytExtract do
   def fine_trim(assoc) do
     # no error handling for lack of matches
     # no error handling for missing keys
-    title = hd(Regex.run(~r|data-name=\"(?<x>.+)\"\n|, assoc.title, capture: :all_but_first))
-    %{:title => title}
+    title = hd(Regex.run(~r|data-name=\"(?<x>.+)\"\n|,
+      assoc.title,
+      capture: :all_but_first))
+    author = hd(Regex.run(~r|data-author="(?<x>.+)"|x,
+      assoc.recipe_subhead,
+      capture: :all_but_first))
+    %{:title => title, :author => author}
   end
 
   @doc """

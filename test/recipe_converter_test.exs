@@ -1,6 +1,7 @@
 defmodule RecipeConverterTest do
   use ExUnit.Case
   doctest RecipeConverter
+  doctest NytExtract
 
   test "Gathering HTML using html_from_url" do
     assert {:ok, _} =
@@ -40,5 +41,14 @@ defmodule RecipeConverterTest do
   test "Extracting title using NytExtract from unknown HTML" do
     assert "No-Knead Bread" = case2().title
     assert "Marinated Feta With Herbs and Peppercorns" = case3().title
+  end
+
+  test "Extracting author using NytExtract from known HTML" do
+    assert "Melissa Clark" = case1().author
+  end
+
+  test "Extracting author using NytExtract from unknown HTML" do
+    assert "Mark Bittman" = case2().author
+    assert "Alexa Weibel" = case3().author
   end
 end
