@@ -34,6 +34,7 @@ defmodule RecipeConverterTest do
     NytExtract.nyt_extract(html)
   end
 
+  # NytExtract.fine_trim title extraction
   test "Extracting title using NytExtract from known HTML" do
     assert "The Best Roast Beef for Sandwiches" = case1().title
   end
@@ -43,6 +44,7 @@ defmodule RecipeConverterTest do
     assert "Marinated Feta With Herbs and Peppercorns" = case3().title
   end
 
+  # NytExtract.fine_trim author extraction
   test "Extracting author using NytExtract from known HTML" do
     assert "Melissa Clark" = case1().author
   end
@@ -50,5 +52,15 @@ defmodule RecipeConverterTest do
   test "Extracting author using NytExtract from unknown HTML" do
     assert "Mark Bittman" = case2().author
     assert "Alexa Weibel" = case3().author
+  end
+
+  # NytExtract.fine_trim yield extraction
+  test "Extracting yield using NytExtract from known HTML" do
+    assert "6 to 10 sandwiches" = case1().yield
+  end
+
+  test "Extracting yield using NytExtract from unknown HTML" do
+    assert "One 1 1/2-pound loaf" = case2().yield
+    assert "About 2 1/2 cups" = case3().yield
   end
 end

@@ -50,7 +50,7 @@ defmodule NytExtract do
                  returned by slim)
 
   Returns: assoc list of useful html chunks
-           has keys [title]
+           has keys [title, author]
   """
   def fine_trim(assoc) do
     # no error handling for lack of matches
@@ -61,7 +61,10 @@ defmodule NytExtract do
     author = hd(Regex.run(~r|data-author="(?<x>.+)"|x,
       assoc.recipe_subhead,
       capture: :all_but_first))
-    %{:title => title, :author => author}
+    yield = hd(Regex.run(~r|"recipe-yield-value">(?<x>.+)</span>|x,
+      assoc.recipe_subhead,
+      capture: :all_but_first))
+    %{:title => title, :author => author, :yield => yield}
   end
 
   @doc """
