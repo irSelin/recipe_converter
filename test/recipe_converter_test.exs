@@ -89,4 +89,17 @@ defmodule RecipeConverterTest do
     assert "The best recipes often make a good ingredient great through minimal effort. For this easy appetizer, start with good-quality feta, preferably in brine, which is creamier than the squeaky supermarket varieties. Many commercial fetas use only cow’s milk and can taste somewhat one-note, so look for one that contains both sheep’s and goat’s milk, which provide the cheese’s signature tang. Dice the feta, toss it with preserved lemon, peppercorns and chile, and refrigerate overnight. Spoon it onto crostini, or serve it alongside eggs, fish, salad, grilled or roasted vegetables or atop a bowl of pasta."
       = case3().topnote
   end
+
+  # NytExtract.fine_trim tag list extraction
+  test "Extracting tags using NytExtract from known HTML" do
+    assert "Roasts, Sandwiches, Boneless Beef Loin, Rosemary, Dinner, Lunch, Main Course" == Enum.join(case1().tags, ", ")
+  end
+
+  test "Extracting tags using NytExtract from unknown HTML" do
+    assert "Breads, Times Classics, Active Dry Yeast, Flour, Easy, Side Dish"
+      == Enum.join(case2().tags, ", ")
+    assert "Dips And Spreads, Finger Foods, Salads And Dressings, Feta, Olive Oil, Parsley, Peppercorn, Preserved Lemon, Serrano Chili, Dinner, Easy, Lunch, Appetizer, Side Dish"
+      == Enum.join(case3().tags, ", ")
+  end
+
 end

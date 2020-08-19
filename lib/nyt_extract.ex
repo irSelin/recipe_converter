@@ -48,6 +48,39 @@ defmodule NytExtract do
   end
 
   @doc """
+  Extracts topnote from HTML chunk
+
+  Helper function for fine_trim
+  """
+  def clean_topnote(html) do
+    x = Regex.run(~r|<p>(?<x>.+)</p><p>|x,
+              html,
+              capture: :all_but_first)
+    case x do
+      [hd | _tl] -> hd
+      nil -> hd (Regex.run(~r|<p>(?<x>.+)</p>|x,
+              html,
+              capture: :all_but_first))
+    end
+  end
+
+  @doc """
+  Extracts tags from HTML chunk
+
+  Helper function for fine_trim
+  """
+  def clean_tags(html) do
+    fold_fun = fn (html, acc) ->
+      tag = Regex.run(~r|>(?<x>.+)</a>|x, html, capture: :all_but_first)
+      case tag do
+        [hd | _tl] -> [hd | acc]
+        nil -> acc
+      end
+    end
+    List.foldr(String.split(html, "<a id"), [], fold_fun)
+  end
+
+  @doc """
   Extracts useful information out of the smaller HTML chunks
 
   Param [assoc]: an association list of smaller HTML chunks (of the format
@@ -71,18 +104,11 @@ defmodule NytExtract do
     time = hd(Regex.run(~r|"recipe-yield-value">(?<x>.+)</span>|x,
               assoc.time,
               capture: :all_but_first))
-    note_lst = Regex.run(~r|<p>(?<x>.+)</p><p>|x,
-              assoc.topnote,
-              capture: :all_but_first)
-    topnote = cond do
-                note_lst -> hd(note_lst)
-                true -> hd (Regex.run(~r|<p>(?<x>.+)</p>|x,
-                          assoc.topnote,
-                          capture: :all_but_first))
-              end
+    topnote = clean_topnote(assoc.topnote)
+    tags = clean_tags(assoc.tags)
 
     %{:title => title, :author => author, :yield => yield, :time => time,
-      :topnote => topnote}
+      :topnote => topnote, :tags => tags}
   end
 
   @doc """
