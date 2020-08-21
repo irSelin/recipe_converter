@@ -81,6 +81,33 @@ defmodule NytExtract do
   end
 
   @doc """
+  Extracts tags from HTML chunk
+
+  Helper function for fine_trim
+  """
+  def clean_ingredients(html) do
+    #filters out html that isn't ingredient chunks
+    filter_fold = fn (html, acc) ->
+      t_html = String.trim(html)
+      cond do
+        String.starts_with?(t_html, "<span class=\"quantity\">") ->
+          [t_html | acc]
+        true ->
+          acc
+      end
+    end
+
+    #removes important info from ingredient chunks
+    clean_fold = fn (html, acc) ->
+      lst = String.split(html, "\n")
+      [[String.trim(Enum.at(lst, 1)), String.trim(Enum.at(lst, 4))] | acc]
+    end
+
+    split = List.foldr(String.split(html, ["<li>", "</li>"]), [], filter_fold)
+    List.foldr(split, [], clean_fold)
+  end
+
+  @doc """
   Extracts useful information out of the smaller HTML chunks
 
   Param [assoc]: an association list of smaller HTML chunks (of the format
@@ -106,9 +133,11 @@ defmodule NytExtract do
               capture: :all_but_first))
     topnote = clean_topnote(assoc.topnote)
     tags = clean_tags(assoc.tags)
+    ingredients = clean_ingredients(assoc.ingredients)
+    IO.puts(ingredients)
 
     %{:title => title, :author => author, :yield => yield, :time => time,
-      :topnote => topnote, :tags => tags}
+      :topnote => topnote, :tags => tags, :ingredients => ingredients}
   end
 
   @doc """
