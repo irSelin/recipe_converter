@@ -108,6 +108,27 @@ defmodule NytExtract do
   end
 
   @doc """
+  Extracts instructions (steps) from HTML chunk
+
+  Helper function for fine_trim
+  """
+  def clean_steps(html) do
+    filter_fold = fn (str, acc) ->
+      cond do
+        String.starts_with?(str, "\n") ->
+          acc
+        true ->
+          [str | acc]
+      end
+    end
+
+    trim = Enum.at(String.split(html, ["class=\"recipe-steps\">", "</ol>"]), 1)
+    uncleaned = String.split(trim, ["<li>", "</li>"])
+    final = List.foldr(uncleaned, [], filter_fold)
+    final
+  end
+
+  @doc """
   Extracts useful information out of the smaller HTML chunks
 
   Param [assoc]: an association list of smaller HTML chunks (of the format
@@ -134,10 +155,11 @@ defmodule NytExtract do
     topnote = clean_topnote(assoc.topnote)
     tags = clean_tags(assoc.tags)
     ingredients = clean_ingredients(assoc.ingredients)
-    IO.puts(ingredients)
+    steps = clean_steps(assoc.steps)
 
     %{:title => title, :author => author, :yield => yield, :time => time,
-      :topnote => topnote, :tags => tags, :ingredients => ingredients}
+      :topnote => topnote, :tags => tags, :ingredients => ingredients,
+      :steps => steps}
   end
 
   @doc """
