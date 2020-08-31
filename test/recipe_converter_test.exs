@@ -2,11 +2,13 @@ defmodule RecipeConverterTest do
   use ExUnit.Case
   doctest RecipeConverter
   doctest NytExtract
+  doctest Convert
+  doctest Macro
 
   @case1 case1()
   @case2 case2()
   @case3 case3()
-  
+
   def case1 do
     {:ok, html} =
       RecipeConverter.html_from_url(
@@ -37,14 +39,14 @@ defmodule RecipeConverterTest do
                "https://cooking.nytimes.com/recipes/1018915-chicken-fried-steak-with-queso-gravy?module=Recipe+of+The+Day&pgType=homepage&action=click"
              )
   end
-  
+
   # NytExtract.fine_trim title extraction
   test "Extracting title using NytExtract from known HTML" do
     assert "The Best Roast Beef for Sandwiches" == @case1.title
   end
 
   test "Extracting title using NytExtract from unknown HTML" do
-    assert "No-Knead Bread" == case2().title
+    assert "No-Knead Bread" == @case2.title
     assert "Marinated Feta With Herbs and Peppercorns" == @case3.title
   end
 
