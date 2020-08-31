@@ -21,10 +21,10 @@ defmodule RecipeConverter do
         {:ok, body}
 
       {:ok, %HTTPoison.Response{status_code: 404}} ->
-        {:error, "Url not found"}
+        {:error, "Url destination not found"}
 
       {:error, _} ->
-        {:error, "Problem with input url"}
+        {:error, "Invalid url"}
     end
   end
 
@@ -35,7 +35,11 @@ defmodule RecipeConverter do
   Param [url]: a string of a url
   """
   def from_nyt(url) do
-    html_from_url(url)
-    raise "from_nyc not implemented"
+    html = case html_from_url(url) do
+             {:ok, content} -> content
+             {:error, msg} -> raise(msg) #if UI added, handle faulty urls here
+           end
+    info = NytExtract.nyt_extract(html)
+    Convert.convert(url, info)
   end
 end

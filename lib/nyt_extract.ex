@@ -135,7 +135,7 @@ defmodule NytExtract do
                  returned by slim)
 
   Returns: assoc list of useful html chunks
-           has keys [title, author, yield, time, topnote]
+           has keys [title, author, yield, time, topnote, tags, ingredients, steps]
   """
   def fine_trim(assoc) do
     # no error handling for lack of matches
@@ -169,7 +169,8 @@ defmodule NytExtract do
   Param [html]: the source code for the NYT website
   Requires: [html] is a string of html source code from a NYT website
 
-  Returns:
+  Returns: assoc list of recipe info
+           has keys [title, author, yield, time, topnote, tags, ingredients, steps]
   """
   def nyt_extract(html) do
     rough_cut(html) |> fine_trim()
