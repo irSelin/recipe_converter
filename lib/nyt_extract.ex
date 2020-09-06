@@ -3,8 +3,6 @@ defmodule NytExtract do
   This module extracts recipe information from a New-York-Times-format HTML doc.
   """
 
-  # ~r|<div class="title-container">(?<x>.+)</div>:first|
-
   @doc """
   Roughly splits HTML into a list of smaller chunks with useful info
 
